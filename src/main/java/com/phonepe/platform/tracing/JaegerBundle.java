@@ -6,8 +6,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.phonepe.platform.tracing.config.JaegerConfig;
 import com.phonepe.platform.tracing.config.ReporterConfig;
+import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
-import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.servlets.tasks.Task;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-public class JaegerBundle implements ConfiguredBundle<JaegerConfig> {
+public abstract class JaegerBundle<T extends Configuration> implements ConfiguredBundle<T> {
 
     @Override
     public void initialize(final Bootstrap<?> bootstrap) {
@@ -48,7 +48,8 @@ public class JaegerBundle implements ConfiguredBundle<JaegerConfig> {
     }
 
     @Override
-    public void run(final JaegerConfig jaegerConfig, final Environment environment) throws Exception {
+    public void run(final T configuration, final Environment environment) throws Exception {
+        final JaegerConfig jaegerConfig = getJaegerConfig(configuration);
         Map<String, String> envVars = extractEnvVars();
         List<ServerSpanDecorator> serverSpanDecorators = ImmutableList.of(
                 new ServerSpanDecorator() {
@@ -102,6 +103,8 @@ public class JaegerBundle implements ConfiguredBundle<JaegerConfig> {
             }
         });
     }
+
+    protected abstract JaegerConfig getJaegerConfig(final T configuration);
 
     private Map<String, String> extractEnvVars() {
         return ImmutableMap.of(
