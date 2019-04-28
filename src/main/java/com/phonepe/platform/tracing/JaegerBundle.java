@@ -123,7 +123,7 @@ public abstract class JaegerBundle<T extends Configuration> implements Configure
                 .withMaxQueueSize(reporterConfig.getMaxQueueSize())
                 .withMetrics(new Metrics(new InMemoryMetricsFactory()))
                 .withSender(reporterConfig.getSender().equalsIgnoreCase("http") ?
-                        new HttpSender.Builder(String.format("http://%s:%d", reporterConfig.getHost(), reporterConfig.getPort())).build() :
+                        new HttpSender.Builder(String.format("http://%s:%d/api/traces", reporterConfig.getHost(), reporterConfig.getPort())).build() :
                         new UdpSender(reporterConfig.getHost(), reporterConfig.getPort(), 0))
                 .build();
     }
