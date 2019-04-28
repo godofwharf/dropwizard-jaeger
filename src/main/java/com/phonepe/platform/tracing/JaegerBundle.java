@@ -91,7 +91,7 @@ public abstract class JaegerBundle<T extends Configuration> implements Configure
             builder.withTraceNothing();
         }
         environment.jersey().register(builder.build());
-        environment.jersey().register(new SpanFinishingFilter());
+        environment.servlets().addFilter("spanFinishingFilter", new SpanFinishingFilter());
         log.info("Jaeger bundle is ready for usage");
     }
 
