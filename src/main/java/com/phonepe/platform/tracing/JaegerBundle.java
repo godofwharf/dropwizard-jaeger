@@ -3,12 +3,10 @@ package com.phonepe.platform.tracing;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
 import com.phonepe.platform.tracing.config.JaegerConfig;
 import com.phonepe.platform.tracing.config.ReporterConfig;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
-import io.dropwizard.servlets.tasks.Task;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.jaegertracing.internal.JaegerTracer;
@@ -35,13 +33,11 @@ import org.eclipse.microprofile.opentracing.Traced;
 import javax.ws.rs.Path;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
-import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 
 @Slf4j
 public abstract class JaegerBundle<T extends Configuration> implements ConfiguredBundle<T> {
-
     @Override
     public void initialize(final Bootstrap<?> bootstrap) {
 
@@ -49,6 +45,7 @@ public abstract class JaegerBundle<T extends Configuration> implements Configure
 
     @Override
     public void run(final T configuration, final Environment environment) throws Exception {
+        log.info("Setting up jaeger tracer");
         final JaegerConfig jaegerConfig = getJaegerConfig(configuration);
         Map<String, String> envVars = extractEnvVars();
         List<ServerSpanDecorator> serverSpanDecorators = ImmutableList.of(
@@ -95,13 +92,7 @@ public abstract class JaegerBundle<T extends Configuration> implements Configure
         }
         environment.jersey().register(builder.build());
         environment.jersey().register(new SpanFinishingFilter());
-        environment.admin().addTask(new Task("jaeger-tracer-shutdown") {
-            @Override
-            public void execute(ImmutableMultimap<String, String> immutableMultimap, PrintWriter printWriter) throws Exception {
-                log.warn("Shutting down jaeger tracer....");
-                tracer.close();
-            }
-        });
+        log.info("Jaeger bundle is ready for usage");
     }
 
     protected abstract JaegerConfig getJaegerConfig(final T configuration);
