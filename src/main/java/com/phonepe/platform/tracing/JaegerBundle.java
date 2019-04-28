@@ -30,9 +30,11 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.eclipse.microprofile.opentracing.Traced;
 
+import javax.servlet.DispatcherType;
 import javax.ws.rs.Path;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 
@@ -91,8 +93,10 @@ public abstract class JaegerBundle<T extends Configuration> implements Configure
             builder.withTraceNothing();
         }
         environment.jersey().register(builder.build());
-        environment.servlets().addFilter("spanFinishingFilter", new SpanFinishingFilter());
+        environment.servlets().addFilter("spanFinishingFilter", new SpanFinishingFilter())
+                .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");;
         log.info("Jaeger bundle is ready for usage");
+        Runtime.getRuntime().addShutdownHook(new Thread(tracer::close, "jaeger-shutdown-hook"));
     }
 
     protected abstract JaegerConfig getJaegerConfig(final T configuration);
