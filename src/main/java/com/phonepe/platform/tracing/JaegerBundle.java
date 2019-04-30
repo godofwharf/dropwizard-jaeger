@@ -56,7 +56,7 @@ public abstract class JaegerBundle<T extends Configuration> implements Configure
                     public void decorateRequest(ContainerRequestContext requestContext, Span span) {
                         span.setTag(Constants.APP_NAME, envVars.get(Constants.APP_NAME));
                         span.setTag(Constants.APP_VERSION, envVars.get(Constants.APP_VERSION));
-                        span.setTag(Constants.HOSTNAME, envVars.get(Constants.HOSTNAME));
+                        span.setTag(Constants.APP_HOST, envVars.get(Constants.APP_HOST));
                     }
 
                     @Override
@@ -105,7 +105,7 @@ public abstract class JaegerBundle<T extends Configuration> implements Configure
         return ImmutableMap.of(
                 Constants.APP_NAME, envOrDefault(Constants.MARATHON_APP_LABEL_NAME, "NA"),
                 Constants.APP_VERSION, envOrDefault(Constants.MARATHON_APP_LABEL_VERSION, "NA"),
-                Constants.HOSTNAME, envOrDefault(Constants.HOSTNAME, "localhost")
+                Constants.APP_HOST, envOrDefault(Constants.MARATHON_HOSTNAME, "localhost")
         );
     }
 
