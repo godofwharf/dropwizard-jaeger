@@ -1,18 +1,16 @@
-package com.phonepe.platform.tracing.config;
+package io.opentracing.contrib.dropwizard.config;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
 public class JaegerConfig {
     @NotEmpty
     private String serviceName;
@@ -30,4 +28,8 @@ public class JaegerConfig {
     private boolean traceSerialization;
 
     private String skipApiPathPattern;
+
+    private boolean enableDynamicInjection;
+
+    private List<String> decoratorPackages = new ArrayList<>();
 }

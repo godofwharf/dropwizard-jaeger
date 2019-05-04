@@ -1,4 +1,4 @@
-package com.phonepe.platform.tracing;
+package io.opentracing.contrib.dropwizard;
 
 public interface Constants {
     String APP_NAME = "app.name";

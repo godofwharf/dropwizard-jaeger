@@ -1,4 +1,4 @@
-package com.phonepe.platform.tracing.config;
+package io.opentracing.contrib.dropwizard.config;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
